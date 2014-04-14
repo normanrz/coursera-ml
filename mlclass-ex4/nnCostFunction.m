@@ -99,28 +99,36 @@ DELTA_1 = zeros(size(Theta1_grad));
 % - Step 2:
 delta_3 = a_3 - yk;
 
-
-for t = 1:m
-
-	% Importing already computed variables for this iteration
-	% Expected as column vector (not rows)
-	t_delta_3 = delta_3(t,:)';
-	t_z_2 = z_2(t,:)';
-	t_a_2 = a_2(t,:)';
-	t_a_1 = a_1(t,:)';
-
 % - Step 3:
-	t_delta_2 = (Theta2' * t_delta_3)(2:end) .* sigmoidGradient(t_z_2);
+delta_2 = (delta_3 * Theta2 .* sigmoidGradient([ones(size(z_2, 1), 1) z_2]))(:, 2:end);
 
 % - Step 4:
-	DELTA_2 = DELTA_2 + (t_delta_3 * t_a_2');
-	DELTA_1 = DELTA_1 + (t_delta_2 * t_a_1');
-
-end
+DELTA_1 = delta_2' * a_1;
+DELTA_2 = delta_3' * a_2;
 
 % - Step 5:
 Theta2_grad = DELTA_2 / m;
 Theta1_grad = DELTA_1 / m;
+
+% Unvectorized algorithm
+% for t = 1:m
+
+% 	% Importing already computed variables for this iteration
+% 	% Expected as column vector (not rows)
+% 	t_delta_3 = delta_3(t,:)';
+% 	t_z_2 = z_2(t,:)';
+% 	t_a_2 = a_2(t,:)';
+% 	t_a_1 = a_1(t,:)';
+
+% % - Step 3:
+% 	t_delta_2 = (Theta2' * t_delta_3)(2:end) .* sigmoidGradient(t_z_2);
+
+% % - Step 4:
+% 	DELTA_2 = DELTA_2 + (t_delta_3 * t_a_2');
+% 	DELTA_1 = DELTA_1 + (t_delta_2 * t_a_1');
+
+% end
+
 
 
 % Regularization
